@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title></title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<p>#Transformations done on the Raw data
+Note : Data in the source location was never modified .
+A local copy of data was made and all the further analyis were performed on the
+local copy of raw data.</p>
+
+<p>Files Used from the extracted zip folder
+activity_labels.txt -lists all possible activities 
+features.txt     - lists all the features measured through the phone
+README.txt       - lists the over all details of data and how it flows through these files<br/>
+/test/subject_test.txt - lists the subjects who performed the test activities
+X_test.txt             - actual measurement test data for each feature in features.txt<br/>
+/test/y_test.txt       - lists the corresponding activity performed while measuring the test data
+/train/subject_train.txt - lists the subjects who performed the train activities
+X_train.txt             - actual measurement train data for each feature in features.txt 
+/train/y_train.txt     - lists the corresponding activity performed while measuring the train data</p>
+
+<p>Based on the info above whats list in the above files, it was found that 
+every row index in subject_test corresponds to same row index in y_test and 
+same row index in X_test i.e all these files have same number of rows and they 
+correspond to same row number in another file.</p>
+
+<ol>
+<li>Read the test subject data from the subject_test.txt (1 column)</li>
+<li>Read the test activity data from the y_test.txt (1 column)</li>
+<li>Read the test measurement data from the X_test.txt (all 561 columns)</li>
+<li>As the data from steps 1 through 3 relate to each other row by 
+row , cbind command was used to merge the test data.   (563 columns)</li>
+<li>Read the train subject data from the subject_train.txt (1 column)</li>
+<li>Read the train activity data from the y_train.txt   (1 column)</li>
+<li>Read the train measurement data from the X_train.txt (all 561 columns)</li>
+<li>As the data from steps 1 through 3 relate to each other row by 
+row , cbind command was used to merge the train data.   (563 columns)</li>
+<li>Merged the test and train data from Step 4 by row wise using rbind command.
+(all the rows from step 4 and step 8 and 563 columns)</li>
+<li>Made another copy of the merge data to do futher analysis (part1 output).
+incase we want the merged  output of test train and activity data we would 
+have at this point from step 9. merged copy of the data from step 10 is used 
+futher to apply any transformations/tidying.</li>
+<li>Read the features data from features.txt</li>
+<li>Renamed the features data columns with more descriptive names 
+featureId and featureName</li>
+<li>Retrieved all the featureNames from the features data from step 11.</li>
+<li>To avoid any issues with Caps locks converted all the featuresNames to lower</li>
+<li>Removed extra characters such as ( ) , -  from the featureNames. </li>
+<li>Renamed all the column names of the merged data copy from step 10 with the 
+more descriptive names in the order below
+&ldquo;subjectId&rdquo;,&ldquo;activityId,all column names output from step15. (563 columns)</li>
+<li>from 563 columns of merged copy data , filtered columns only to include
+columns such as &quot;subjectId&rdquo;,
+&ldquo;activityId&rdquo;, all other columns matching the string &ldquo;mean|std&rdquo;.
+Because for this analysis we are only interested in the measurement names 
+containing mean or std. matching logic was set to look for &ldquo;mean&rdquo; or &ldquo;std&rdquo; 
+any where in the column name , not necessarily in the begining , middle or 
+end. (88 columns)
+ Columns used during the analysis (88 columns)
+     [1] &ldquo;subjectId&rdquo;                         &ldquo;activityId&rdquo;<br/>
+     [3] &ldquo;tbodyaccmeanx&rdquo;                     &ldquo;tbodyaccmeany&rdquo;<br/>
+     [5] &ldquo;tbodyaccmeanz&rdquo;                     &ldquo;tbodyaccstdx&rdquo;<br/>
+     [7] &ldquo;tbodyaccstdy&rdquo;                      &ldquo;tbodyaccstdz&rdquo;<br/>
+     [9] &ldquo;tgravityaccmeanx&rdquo;                  &ldquo;tgravityaccmeany&rdquo;<br/>
+    [11] &ldquo;tgravityaccmeanz&rdquo;                  &ldquo;tgravityaccstdx&rdquo;<br/>
+    [13] &ldquo;tgravityaccstdy&rdquo;                   &ldquo;tgravityaccstdz&rdquo;<br/>
+    [15] &ldquo;tbodyaccjerkmeanx&rdquo;                 &ldquo;tbodyaccjerkmeany&rdquo;<br/>
+    [17] &ldquo;tbodyaccjerkmeanz&rdquo;                 &ldquo;tbodyaccjerkstdx&rdquo;<br/>
+    [19] &ldquo;tbodyaccjerkstdy&rdquo;                  &ldquo;tbodyaccjerkstdz&rdquo;<br/>
+    [21] &ldquo;tbodygyromeanx&rdquo;                    &ldquo;tbodygyromeany&rdquo;<br/>
+    [23] &ldquo;tbodygyromeanz&rdquo;                    &ldquo;tbodygyrostdx&rdquo;<br/>
+    [25] &ldquo;tbodygyrostdy&rdquo;                     &ldquo;tbodygyrostdz&rdquo;<br/>
+    [27] &ldquo;tbodygyrojerkmeanx&rdquo;                &ldquo;tbodygyrojerkmeany&rdquo;<br/>
+    [29] &ldquo;tbodygyrojerkmeanz&rdquo;                &ldquo;tbodygyrojerkstdx&rdquo;<br/>
+    [31] &ldquo;tbodygyrojerkstdy&rdquo;                 &ldquo;tbodygyrojerkstdz&rdquo;<br/>
+    [33] &ldquo;tbodyaccmagmean&rdquo;                   &ldquo;tbodyaccmagstd&rdquo;<br/>
+    [35] &ldquo;tgravityaccmagmean&rdquo;                &ldquo;tgravityaccmagstd&rdquo;<br/>
+    [37] &ldquo;tbodyaccjerkmagmean&rdquo;               &ldquo;tbodyaccjerkmagstd&rdquo;<br/>
+    [39] &ldquo;tbodygyromagmean&rdquo;                  &ldquo;tbodygyromagstd&rdquo;<br/>
+    [41] &ldquo;tbodygyrojerkmagmean&rdquo;              &ldquo;tbodygyrojerkmagstd&rdquo;<br/>
+    [43] &ldquo;fbodyaccmeanx&rdquo;                     &ldquo;fbodyaccmeany&rdquo;<br/>
+    [45] &ldquo;fbodyaccmeanz&rdquo;                     &ldquo;fbodyaccstdx&rdquo;<br/>
+    [47] &ldquo;fbodyaccstdy&rdquo;                      &ldquo;fbodyaccstdz&rdquo;<br/>
+    [49] &ldquo;fbodyaccmeanfreqx&rdquo;                 &ldquo;fbodyaccmeanfreqy&rdquo;<br/>
+    [51] &ldquo;fbodyaccmeanfreqz&rdquo;                 &ldquo;fbodyaccjerkmeanx&rdquo;<br/>
+    [53] &ldquo;fbodyaccjerkmeany&rdquo;                 &ldquo;fbodyaccjerkmeanz&rdquo;<br/>
+    [55] &ldquo;fbodyaccjerkstdx&rdquo;                  &ldquo;fbodyaccjerkstdy&rdquo;<br/>
+    [57] &ldquo;fbodyaccjerkstdz&rdquo;                  &ldquo;fbodyaccjerkmeanfreqx&rdquo;<br/>
+    [59] &ldquo;fbodyaccjerkmeanfreqy&rdquo;             &ldquo;fbodyaccjerkmeanfreqz&rdquo;<br/>
+    [61] &ldquo;fbodygyromeanx&rdquo;                    &ldquo;fbodygyromeany&rdquo;<br/>
+    [63] &ldquo;fbodygyromeanz&rdquo;                    &ldquo;fbodygyrostdx&rdquo;<br/>
+    [65] &ldquo;fbodygyrostdy&rdquo;                     &ldquo;fbodygyrostdz&rdquo;<br/>
+    [67] &ldquo;fbodygyromeanfreqx&rdquo;                &ldquo;fbodygyromeanfreqy&rdquo;<br/>
+    [69] &ldquo;fbodygyromeanfreqz&rdquo;                &ldquo;fbodyaccmagmean&rdquo;<br/>
+    [71] &ldquo;fbodyaccmagstd&rdquo;                    &ldquo;fbodyaccmagmeanfreq&rdquo;<br/>
+    [73] &ldquo;fbodybodyaccjerkmagmean&rdquo;           &ldquo;fbodybodyaccjerkmagstd&rdquo;<br/>
+    [75] &ldquo;fbodybodyaccjerkmagmeanfreq&rdquo;       &ldquo;fbodybodygyromagmean&rdquo;<br/>
+    [77] &ldquo;fbodybodygyromagstd&rdquo;               &ldquo;fbodybodygyromagmeanfreq&rdquo;<br/>
+    [79] &ldquo;fbodybodygyrojerkmagmean&rdquo;          &ldquo;fbodybodygyrojerkmagstd&rdquo;<br/>
+    [81] &ldquo;fbodybodygyrojerkmagmeanfreq&rdquo;      &ldquo;angletbodyaccmeangravity&rdquo;<br/>
+    [83] &ldquo;angletbodyaccjerkmeangravitymean&rdquo;  &ldquo;angletbodygyromeangravitymean&rdquo;<br/>
+    [85] &ldquo;angletbodygyrojerkmeangravitymean&rdquo; &ldquo;anglexgravitymean&rdquo;<br/>
+    [87] &ldquo;angleygravitymean&rdquo;                 &ldquo;anglezgravitymean&rdquo; </li>
+</ol>
+
+<p>#ColumnType        </p>
+
+<pre><code>    For all 88 columns ( 2 columns - subjectId,activityId)
+                       (86 columns containing name &quot;mean&quot; or &quot;std&quot;)     
+
+    columnName      columnType
+
+    subjectId       numeric
+    activityId      numeric
+</code></pre>
+
+<p>#All the following columns are from measurement data and they were all numeric in the raw data
+and also numeric in our local copy / analysis. </p>
+
+<pre><code>    &quot;tbodyaccmeanx&quot;                     &quot;tbodyaccmeany&quot;                    
+    &quot;tbodyaccmeanz&quot;                     &quot;tbodyaccstdx&quot;                     
+    &quot;tbodyaccstdy&quot;                      &quot;tbodyaccstdz&quot;                     
+    &quot;tgravityaccmeanx&quot;                  &quot;tgravityaccmeany&quot;                 
+    &quot;tgravityaccmeanz&quot;                  &quot;tgravityaccstdx&quot;                  
+    &quot;tgravityaccstdy&quot;                   &quot;tgravityaccstdz&quot;                  
+    &quot;tbodyaccjerkmeanx&quot;                 &quot;tbodyaccjerkmeany&quot;                
+    &quot;tbodyaccjerkmeanz&quot;                 &quot;tbodyaccjerkstdx&quot;                 
+    &quot;tbodyaccjerkstdy&quot;                  &quot;tbodyaccjerkstdz&quot;                 
+    &quot;tbodygyromeanx&quot;                    &quot;tbodygyromeany&quot;                   
+    &quot;tbodygyromeanz&quot;                    &quot;tbodygyrostdx&quot;                    
+    &quot;tbodygyrostdy&quot;                     &quot;tbodygyrostdz&quot;                    
+    &quot;tbodygyrojerkmeanx&quot;                &quot;tbodygyrojerkmeany&quot;               
+    &quot;tbodygyrojerkmeanz&quot;                &quot;tbodygyrojerkstdx&quot;                
+    &quot;tbodygyrojerkstdy&quot;                 &quot;tbodygyrojerkstdz&quot;                
+    &quot;tbodyaccmagmean&quot;                   &quot;tbodyaccmagstd&quot;                   
+    &quot;tgravityaccmagmean&quot;                &quot;tgravityaccmagstd&quot;                
+    &quot;tbodyaccjerkmagmean&quot;               &quot;tbodyaccjerkmagstd&quot;               
+    &quot;tbodygyromagmean&quot;                  &quot;tbodygyromagstd&quot;                  
+    &quot;tbodygyrojerkmagmean&quot;              &quot;tbodygyrojerkmagstd&quot;              
+    &quot;fbodyaccmeanx&quot;                     &quot;fbodyaccmeany&quot;                    
+    &quot;fbodyaccmeanz&quot;                     &quot;fbodyaccstdx&quot;                     
+    &quot;fbodyaccstdy&quot;                      &quot;fbodyaccstdz&quot;                     
+    &quot;fbodyaccmeanfreqx&quot;                 &quot;fbodyaccmeanfreqy&quot;                
+    &quot;fbodyaccmeanfreqz&quot;                 &quot;fbodyaccjerkmeanx&quot;                
+    &quot;fbodyaccjerkmeany&quot;                 &quot;fbodyaccjerkmeanz&quot;                
+    &quot;fbodyaccjerkstdx&quot;                  &quot;fbodyaccjerkstdy&quot;                 
+    &quot;fbodyaccjerkstdz&quot;                  &quot;fbodyaccjerkmeanfreqx&quot;            
+    &quot;fbodyaccjerkmeanfreqy&quot;             &quot;fbodyaccjerkmeanfreqz&quot;            
+    &quot;fbodygyromeanx&quot;                    &quot;fbodygyromeany&quot;                   
+    &quot;fbodygyromeanz&quot;                    &quot;fbodygyrostdx&quot;                    
+    &quot;fbodygyrostdy&quot;                     &quot;fbodygyrostdz&quot;                    
+    &quot;fbodygyromeanfreqx&quot;                &quot;fbodygyromeanfreqy&quot;               
+    &quot;fbodygyromeanfreqz&quot;                &quot;fbodyaccmagmean&quot;                  
+    &quot;fbodyaccmagstd&quot;                    &quot;fbodyaccmagmeanfreq&quot;              
+    &quot;fbodybodyaccjerkmagmean&quot;           &quot;fbodybodyaccjerkmagstd&quot;           
+    &quot;fbodybodyaccjerkmagmeanfreq&quot;       &quot;fbodybodygyromagmean&quot;             
+    &quot;fbodybodygyromagstd&quot;               &quot;fbodybodygyromagmeanfreq&quot;         
+    &quot;fbodybodygyrojerkmagmean&quot;          &quot;fbodybodygyrojerkmagstd&quot;          
+    &quot;fbodybodygyrojerkmagmeanfreq&quot;      &quot;angletbodyaccmeangravity&quot;         
+    &quot;angletbodyaccjerkmeangravitymean&quot;  &quot;angletbodygyromeangravitymean&quot;    
+    &quot;angletbodygyrojerkmeangravitymean&quot; &quot;anglexgravitymean&quot;                
+    &quot;angleygravitymean&quot;                 &quot;anglezgravitymean&quot; 
+</code></pre>
+
+<ol>
+<li>Read the activity labels  from the activity_labels.txt 
+i.e. RUNNING , WALKING etc<br/></li>
+<li>merged the merged copy data with acitivity data from step 18</li>
+<li>excluded columns such as activityId, as we are going to use activity Name </li>
+<li><p>Group the data by subjectId and activity name to find number of observations 
+per subjectId and activityName</p>
+
+<p>This is the final tidy data with 180 observations for 88 columns 
+(descriptive column names and activityName column instead activityId)</p>
+
+<pre><code>   [1] &quot;subjectId&quot;                         &quot;activityName&quot;                     
+ [3] &quot;tbodyaccmeanx&quot;                     &quot;tbodyaccmeany&quot;                    
+ [5] &quot;tbodyaccmeanz&quot;                     &quot;tbodyaccstdx&quot;                     
+ [7] &quot;tbodyaccstdy&quot;                      &quot;tbodyaccstdz&quot;                     
+ [9] &quot;tgravityaccmeanx&quot;                  &quot;tgravityaccmeany&quot;                 
+[11] &quot;tgravityaccmeanz&quot;                  &quot;tgravityaccstdx&quot;                  
+[13] &quot;tgravityaccstdy&quot;                   &quot;tgravityaccstdz&quot;                  
+[15] &quot;tbodyaccjerkmeanx&quot;                 &quot;tbodyaccjerkmeany&quot;                
+[17] &quot;tbodyaccjerkmeanz&quot;                 &quot;tbodyaccjerkstdx&quot;                 
+[19] &quot;tbodyaccjerkstdy&quot;                  &quot;tbodyaccjerkstdz&quot;                 
+[21] &quot;tbodygyromeanx&quot;                    &quot;tbodygyromeany&quot;                   
+[23] &quot;tbodygyromeanz&quot;                    &quot;tbodygyrostdx&quot;                    
+[25] &quot;tbodygyrostdy&quot;                     &quot;tbodygyrostdz&quot;                    
+[27] &quot;tbodygyrojerkmeanx&quot;                &quot;tbodygyrojerkmeany&quot;               
+[29] &quot;tbodygyrojerkmeanz&quot;                &quot;tbodygyrojerkstdx&quot;                
+[31] &quot;tbodygyrojerkstdy&quot;                 &quot;tbodygyrojerkstdz&quot;                
+[33] &quot;tbodyaccmagmean&quot;                   &quot;tbodyaccmagstd&quot;                   
+[35] &quot;tgravityaccmagmean&quot;                &quot;tgravityaccmagstd&quot;                
+[37] &quot;tbodyaccjerkmagmean&quot;               &quot;tbodyaccjerkmagstd&quot;               
+[39] &quot;tbodygyromagmean&quot;                  &quot;tbodygyromagstd&quot;                  
+[41] &quot;tbodygyrojerkmagmean&quot;              &quot;tbodygyrojerkmagstd&quot;              
+[43] &quot;fbodyaccmeanx&quot;                     &quot;fbodyaccmeany&quot;                    
+[45] &quot;fbodyaccmeanz&quot;                     &quot;fbodyaccstdx&quot;                     
+[47] &quot;fbodyaccstdy&quot;                      &quot;fbodyaccstdz&quot;                     
+[49] &quot;fbodyaccmeanfreqx&quot;                 &quot;fbodyaccmeanfreqy&quot;                
+[51] &quot;fbodyaccmeanfreqz&quot;                 &quot;fbodyaccjerkmeanx&quot;                
+[53] &quot;fbodyaccjerkmeany&quot;                 &quot;fbodyaccjerkmeanz&quot;                
+[55] &quot;fbodyaccjerkstdx&quot;                  &quot;fbodyaccjerkstdy&quot;                 
+[57] &quot;fbodyaccjerkstdz&quot;                  &quot;fbodyaccjerkmeanfreqx&quot;            
+[59] &quot;fbodyaccjerkmeanfreqy&quot;             &quot;fbodyaccjerkmeanfreqz&quot;            
+[61] &quot;fbodygyromeanx&quot;                    &quot;fbodygyromeany&quot;                   
+[63] &quot;fbodygyromeanz&quot;                    &quot;fbodygyrostdx&quot;                    
+[65] &quot;fbodygyrostdy&quot;                     &quot;fbodygyrostdz&quot;                    
+[67] &quot;fbodygyromeanfreqx&quot;                &quot;fbodygyromeanfreqy&quot;               
+[69] &quot;fbodygyromeanfreqz&quot;                &quot;fbodyaccmagmean&quot;                  
+[71] &quot;fbodyaccmagstd&quot;                    &quot;fbodyaccmagmeanfreq&quot;              
+[73] &quot;fbodybodyaccjerkmagmean&quot;           &quot;fbodybodyaccjerkmagstd&quot;           
+[75] &quot;fbodybodyaccjerkmagmeanfreq&quot;       &quot;fbodybodygyromagmean&quot;             
+[77] &quot;fbodybodygyromagstd&quot;               &quot;fbodybodygyromagmeanfreq&quot;         
+[79] &quot;fbodybodygyrojerkmagmean&quot;          &quot;fbodybodygyrojerkmagstd&quot;          
+[81] &quot;fbodybodygyrojerkmagmeanfreq&quot;      &quot;angletbodyaccmeangravity&quot;         
+[83] &quot;angletbodyaccjerkmeangravitymean&quot;  &quot;angletbodygyromeangravitymean&quot;    
+[85] &quot;angletbodygyrojerkmeangravitymean&quot; &quot;anglexgravitymean&quot;                
+[87] &quot;angleygravitymean&quot;                 &quot;anglezgravitymean&quot; 
+</code></pre></li>
+</ol>
+
+</body>
+
+</html>

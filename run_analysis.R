@@ -1,7 +1,4 @@
-#url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
-#download.file(url,method = "curl",destfile = "GCD_Project_UCI_HARDataset.zip")
-#unzip("GCD_Project_UCI_HARDataset.zip",exdir = "GCD_Project")
-
+library(dplyr)
 #part 1
 #testSet
 testSubjectData <- read.table("GCD_Project/UCI HAR Dataset/test/subject_test.txt")
@@ -15,14 +12,13 @@ trainMeasurementData <- read.table("GCD_Project/UCI HAR Dataset/train/X_train.tx
 mergedTrainData<-cbind(trainSubjectData,trainActivityData,trainMeasurementData)
 #mergedTestTrain Data
 mergedData<- rbind(mergedTestData,mergedTrainData)
-
+mergedDataCopy <- mergedData
 #part4
 features <- read.table("GCD_Project/UCI HAR Dataset/features.txt")
 colnames(features)<-c("featureId","featureName")
 featureNames <- features$featureName
 tidyFeatureNames<- tolower(featureNames)
 tidyFeatureNames<-gsub("\\(|\\)|\\,|\\-","",tidyFeatureNames)
-mergedDataCopy <- mergedData
 colnames(mergedDataCopy) <- c("subjectId","activityId",tidyFeatureNames)
 #part2
 interestedColumns <- c("subjectId","activityId")
@@ -37,5 +33,3 @@ totCol<-ncol(finalInterestedData)
 finalInterestedData<- finalInterestedData[c(2,totCol,3:(totCol-1))]
 #part5
 tidyData<-finalInterestedData %>% group_by(subjectId,activityName) %>% summarise_each(funs(mean))
-#default output -  part1 
-mergedData
